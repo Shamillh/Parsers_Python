@@ -1,0 +1,27 @@
+# Импорт необходимых библиотек
+import requests  # Для отправки HTTP-запросов к веб-сайту
+from bs4 import BeautifulSoup  # Для парсинга HTML и извлечения данных
+
+# URL целевой страницы с товарами для скрапинга
+url = 'https://scrapingclub.com/exercise/list_basic/'
+
+# Отправка GET-запроса к веб-сайту и получение ответа сервера
+response = requests.get(url)
+
+# Создание объекта BeautifulSoup для парсинга HTML-контента
+# 'lxml' - быстрый и эффективный парсер для обработки HTML/XML
+soup = BeautifulSoup(response.text, 'lxml')
+
+# Поиск всех контейнеров с товарами на странице
+# Классы 'col-lg-4 col-md-6 mb-4' соответствуют сетке Bootstrap для карточек товаров
+items = soup.find_all('div', class_='col-lg-4 col-md-6 mb-4')
+
+# Перебор всех найденных товаров с автоматической нумерацией
+# enumerate добавляет счетчик (n), start=1 начинает нумерацию с 1
+for n, i in enumerate(items, start=1):
+    # Извлечение названия товара из тега h4 с классом 'card-title'
+    # .text получает текстовое содержимое, .strip() удаляет лишние пробелы по краям
+    itemName = i.find('h4', class_='card-title').text.strip()
+    
+    # Вывод номера и названия товара в формате: "1. Название товара"
+    print(f'{n}. {itemName}')
